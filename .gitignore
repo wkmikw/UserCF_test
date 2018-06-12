@@ -1,2 +1,6 @@
 
-*.csv
+*.xml
+*.iml
+*.pyc
+*.npy
+data
