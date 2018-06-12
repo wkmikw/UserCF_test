@@ -12,24 +12,22 @@ MAXMOVIE = 1682
 MAXUSER = 943
 
 def SplitData(M, k, seed):
-    data = np.loadtxt('data/data.csv', dtype=int, delimiter=',')
+    data = np.loadtxt('data/dataUq.csv', dtype=int, delimiter=',')
     test = []
     train = []
     random.seed(seed)
     for ele in data:
         if random.randint(0, M) == k:
-            test.append([ele[0], ele[1]])
+            test.append(ele)
         else:
-            train.append([ele[0], ele[1]])
+            train.append(ele)
     test = np.array(test)
     train = np.array(train)
     return test, train
 if __name__ == '__main__':
-    test, train = SplitData(data, 11, 5, 1)
+    test, train = SplitData(9, 5, 1)
     test = np.array(test)
     train = np.array(train)
-
-    gc.collect()
     np.save('data/test', test)
     np.save('data/train', train)
 

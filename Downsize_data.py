@@ -111,14 +111,15 @@ U_Q_num = np.sum(RD, axis=1)  # 个人答题数
 Q_U_num = np.sum(RD, axis=0)  # 题目作答数
 RD_New = []
 RC_New = []
-Hash_Q = np.tile(-1, RD.shape[1])
+Hash_Q = np.tile(-1, RD.shape[1] + 1)
 cur = 0
 for i in range(RD.shape[1]):
     if Q_U_num[i]:
         RD_New.append(RD[:, i])
         RC_New.append(RC[:, i])
-        Hash_Q[i] = cur
+        Hash_Q[i + 1] = cur
         cur += 1
+#np.save('data/Hash_Q', Hash_Q)
 RD = np.array(RD_New, dtype=int).T
 RC = np.array(RC_New, dtype=int).T
 # 用Hash_Q刷新Q
