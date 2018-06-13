@@ -3,13 +3,13 @@
 # python User_similarity.py
 
 import numpy as np
-import math
+import math, time
 from filter import SplitData
 from attach_difficulty import attach_difficulty
 
-MAXQ = 3911
-MAXU = 50
-MAXITEM = 10
+MAXQ = 30119
+MAXU = 500
+MAXITEM = 163
 K = 5
 M = 10  # 数据分片
 
@@ -28,7 +28,7 @@ def MAX_K(ele, K):
                     j += 1
                 else:
                     break
-    return(Max_list)
+    return Max_list
 
 
 # calculate similarity
@@ -49,11 +49,31 @@ def User_similarity(u1, u2, S):
 def predict(Q_dif, s):
     dif = [0.5, 0.625, 0.75, 0.875, 1.]
     pre = s / dif[Q_dif - 1]
-    return pre + (1 - pre) * 0.25 if pre <= 1 else pre
+    return pre + (1 - pre) * 0.25 if pre <= 1 else 1
 
 
+def go_test(S, test, dataQi):
+    d = 0  # 方差
+    e = 0  # 期望正确率
+    r = 0  # 实际正确率
+    for ele in test:
+        Q_dif = dataQi[ele[1], 2]
+        item = dataQi[ele[1], 1]
+        s = S[ele[0], item]
+        p = predict(Q_dif, s)
+        d += (p - ele[2]) ** 2
+        e += p
+        r += ele[2]
+    d = d / test.shape[0]
+    e = e / test.shape[0]
+    r = r / test.shape[0]
+    return [d, e, r]
+
+S_rules = np.load('data/S_fill_rule.npy') - 0.4
+S_rules[S_rules < 0] = 0
 all_d = 0
 all_d_raw = 0
+start = time.time()
 for tag in range(M):
     test, train = SplitData(M - 1, tag, 5)
     test = np.array(test, dtype=int)
@@ -77,54 +97,57 @@ for tag in range(M):
         for i in ele:
             i[0] = i[0] / i[1] if i[1] else 0
     S = S_cal[:, :, 0]
-    S_raw = S
+    S_raw = S.copy()
     np.save('data/S', S)
+    end = time.time()
+    print('Task S completed at %ds' % (end - start))
 
+    # 计算相似度
     UU_similarity = np.zeros([MAXU, MAXU])
     for i in range(MAXU):
-        for j in range(MAXU):
-            if i != j:
-                UU_similarity[i][j] = User_similarity(i, j, S)
+        for j in range(i + 1, MAXU):
+            UU_similarity[i][j] = User_similarity(i, j, S)
+            UU_similarity[j][i] = UU_similarity[i][j]
 
     np.save('data/UU_similarity', UU_similarity)
-    '''
-    count = 0
-    for i in range(MAXU):
-        for j in range(MAXITEM):
-            if S[i, j] == 0:
-                count += 1
-    print(count)
-    '''
+    end = time.time()
+    print('Task Sim completed at %ds' % (end - start))
+
     # fill the S
+    S_fill = np.zeros([MAXU, MAXITEM], dtype=float)
     for i in range(MAXU):
-        max5 = MAX_K(UU_similarity[i], K)
+        maxK = MAX_K(UU_similarity[i], K)
         temp = np.zeros(MAXITEM, dtype=float)
-        for ele in max5:
+        simacc = 0
+        for ele in maxK:
             temp += ele[1] * S[int(ele[0])]
+            simacc += ele[1]
         for j in range(MAXITEM):
             if S[i, j] == 0:
-                S[i, j] = temp[j] / 5
+                S_fill[i, j] = temp[j] / simacc
+    S[S == 0] = S_fill[S == 0]
 
     # 归一化 负值归零
     S[S < 0] = 0
     S = S / np.max(S)
+    #S = S
+    S[S < 0] = 0
+    S_raw = S_raw / np.max(S_raw)
+    S_raw = S_raw + 0.07
+    # test
+    d, e, r = go_test(S, test, dataQi)
+    print(d, e, r, 'CF')
+    d, e, r = go_test(S_rules, test, dataQi)
+    print(d, e, r, 'rules')
+    d, e, r = go_test(S_raw, test, dataQi)
+    print(d, e, r, 'raw')
 
-    d = 0
-    d_raw = 0
-    for ele in test:
-        Q_dif = dataQi[ele[1], 2]
-        item = dataQi[ele[1], 1]
-        s = S[ele[0], item]
-        p = predict(Q_dif, s)
-        s = S_raw[ele[0], item]
-        p_raw = predict(Q_dif, s)
-        d += (p - ele[2]) ** 2
-        d_raw += (p_raw - ele[2]) ** 2
+    #S_raw[S_raw == 0] = S_rules[S_raw == 0]
+    #d, e, r = go_test(S_raw, test, dataQi)
+    #print(d, e, r, 'raw+rule')
 
-    d = d / test.shape[0]
-    d_raw = d_raw / test.shape[0]
-    print(d, d_raw)
-    all_d += d
-    all_d_raw += d_raw
+# print(all_d / M, all_d_raw / M)
 
-print(all_d / M, all_d_raw / M)
+
+
+

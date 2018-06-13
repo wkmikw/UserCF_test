@@ -6,8 +6,8 @@ import numpy as np
 
 
 def attach_difficulty():
-    NUM_ITEMS = 10
-    NUM_QUESTION = 3911
+    NUM_ITEMS = 30
+    NUM_QUESTION = 30119
 
     difficulty = np.loadtxt('data/difficulty.csv', dtype=int, delimiter='\t')
     Hash_Q = np.load('data/Hash_Q.npy')
@@ -17,7 +17,7 @@ def attach_difficulty():
             difficulty_attached[Hash_Q[ele[0]]] = ele[1]
     # np.save('data/difficulty_attached', difficulty_attached)
 
-    dataQi = np.loadtxt('data/dataQi.csv', dtype=int, delimiter=',')
+    dataQi = np.loadtxt('data/dataQi1.csv', dtype=int, delimiter=',')
     dataQi_new = []
     for ele in dataQi:
         dataQi_new.append([ele[0], ele[1], difficulty_attached[ele[0]]])

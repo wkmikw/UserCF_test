@@ -8,11 +8,11 @@ import time
 import math
 import random
 
-MAXMOVIE = 1682
-MAXUSER = 943
+# MAXMOVIE = 1682
+# MAXUSER = 943
 
 def SplitData(M, k, seed):
-    data = np.loadtxt('data/dataUq.csv', dtype=int, delimiter=',')
+    data = np.loadtxt('data/dataUq1.csv', dtype=int, delimiter=',')
     test = []
     train = []
     random.seed(seed)

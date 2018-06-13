@@ -9,6 +9,9 @@ NUM_ITEMS = 163
 NUM_QUESTION = 42289  # 有空编号
 NUM_UQC = 538675
 
+PICK_USER = 500
+PICK_ITEM = 163
+
 # 选出K个最大的带编号返回
 def MAX_K(ele, K):
     Max_list = np.zeros([K, 2], dtype=int)  # min in 0
@@ -41,8 +44,8 @@ for ele in dataUq:
     RC[ele[0] - 1, ele[1] - 1] = ele[2]
 # print(item_Q_num)
 
-# 精简知识点,并删掉Q矩中题目
-Downsizing_item = MAX_K(item_Q_num, 10)
+# 精简知识点30,并删掉Q矩中题目
+Downsizing_item = MAX_K(item_Q_num, PICK_ITEM)
 label_item = np.zeros(NUM_ITEMS, dtype=int)
 for ele in Downsizing_item:
     label_item[ele[0]] = 1  # 0-162
@@ -86,10 +89,10 @@ for i in range(dataUq.shape[0]):
 dataUq = np.array(dataUq_New, dtype=int)
 '''
 
-# 50个User
-# 标记答题最多50个用户
+# 100个User
+# 标记答题最多100个用户
 U_Q_num = np.sum(RD, axis=1)  # 个人答题数
-Downsizing_User = MAX_K(U_Q_num, 50)  # 答题最多的50个
+Downsizing_User = MAX_K(U_Q_num, PICK_USER)  # 答题最多的50个
 label_User = np.zeros(NUM_USERS, dtype=int)
 for ele in Downsizing_User:
     label_User[ele[0]] = 1  # 0start
@@ -119,7 +122,7 @@ for i in range(RD.shape[1]):
         RC_New.append(RC[:, i])
         Hash_Q[i + 1] = cur
         cur += 1
-#np.save('data/Hash_Q', Hash_Q)
+np.save('data/Hash_Q', Hash_Q)
 RD = np.array(RD_New, dtype=int).T
 RC = np.array(RC_New, dtype=int).T
 # 用Hash_Q刷新Q
@@ -195,16 +198,16 @@ for ele in dataUq:
 for ele in dataQi:
     ele[0] = hash_Q[ele[0]]
 '''
-np.save('data/Q', Q)
-np.save('data/RD', RD)
-np.save('data/RC', RC)
-with open('/python/CDM/data/dataUq.csv', 'w') as f:
+# np.save('data/Q', Q)
+# np.save('data/RD', RD)
+# np.save('data/RC', RC)
+with open('/python/UserCF_test/data/dataUq1.csv', 'w') as f:
     for i in range(RD.shape[0]):
         for j in range(RD.shape[1]):
             if RD[i, j]:
                 f.write('%d,%d,%d\n' % (i, j, RC[i, j]))
 
-with open('/python/CDM/data/dataQi.csv', 'w') as f:
+with open('/python/UserCF_test/data/dataQi1.csv', 'w') as f:
     for i in range(Q.shape[0]):
         for j in range(Q.shape[1]):
             if Q[i, j]:
