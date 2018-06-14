@@ -6,8 +6,8 @@ import numpy as np
 import math, time
 from computing_scr import Hash_Q_item, fill_SCR
 
-MAXQ = 30119
-MAXU = 500
+MAXQ = 34301
+MAXU = 1000
 MAXITEM = 163
 
 RC = np.zeros([MAXU, MAXQ])
@@ -53,8 +53,7 @@ Hash_Q = Hash_Q_item()
 # 知识点下的题目数
 item_Q_num = np.sum(Q, axis=0)
 # 计算填充未有答题记录项
-SCR = fill_SCR(SCR, PCR, Hash_Q, item_Q_num)
-
+SCR = fill_SCR(SCR, PCR, Hash_Q, item_Q_num, MAXU)
 
 # RS1 用户每题对应的知识点下做对的题目数量
 QT = Q.T

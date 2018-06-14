@@ -12,9 +12,7 @@ import math
 def Hash_Q_item(): # 知识点关系映射表生成函数 单向映射，child to parent
     DIVISION1 = 1000 # 取二级知识点编号
     DIVISION2 = 1000000 # 取一级知识点编号
-    NUM_USERS = 10515
     NUM_ITEMS = 163
-    NUM_QUESTION = 42289
     data = np.loadtxt('data/item_map.csv', dtype=int, delimiter=',') # 读入知识点id与完整编号
     Hash_Q = np.zeros((NUM_ITEMS, 3), dtype=int) # 初始化三级映射表
     temp1st = data[0, 1] // DIVISION1 # 初始化暂存对比编号
@@ -42,12 +40,9 @@ def Hash_Q_item(): # 知识点关系映射表生成函数 单向映射，child t
 
 
 
-def fill_SCR(SCR, PCR, Hash_Q, item_Q_num):
+def fill_SCR(SCR, PCR, Hash_Q, item_Q_num, NUM_USERS):
     NUM_ITEMS_up = 71
     NUM_ITEMS_upup = 19
-    NUM_USERS = 500
-    NUM_ITEMS = 163
-    NUM_QUESTION = 42289
     # 利用SCR计算上级知识点正确率
     SCRup = np.zeros((NUM_USERS, NUM_ITEMS_up, 2)) # 初始化上级知识点下答题正确率
     SCRupup = np.zeros((NUM_USERS, NUM_ITEMS_upup, 2))

@@ -7,8 +7,8 @@ import math, time
 from filter import SplitData
 from attach_difficulty import attach_difficulty
 
-MAXQ = 30119
-MAXU = 500
+MAXQ = 34301
+MAXU = 1000
 MAXITEM = 163
 K = 5
 M = 10  # 数据分片
@@ -78,7 +78,7 @@ for tag in range(M):
     test, train = SplitData(M - 1, tag, 5)
     test = np.array(test, dtype=int)
     train = np.array(train, dtype=int)
-    dataQi = attach_difficulty()  # [题号， 知识点， 难度]
+    dataQi = attach_difficulty(MAXQ)  # [题号， 知识点， 难度]
     S_cal = np.zeros([MAXU, MAXITEM, 2], dtype=float)  # [难度加权，count]
     dif = [1., 1.25, 1.5, 1.75, 2.]
 

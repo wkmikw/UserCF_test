@@ -5,13 +5,12 @@
 import numpy as np
 
 
-def attach_difficulty():
-    NUM_ITEMS = 30
-    NUM_QUESTION = 30119
+def attach_difficulty(MAXQ):
+    # MAXQ = 34301
 
     difficulty = np.loadtxt('data/difficulty.csv', dtype=int, delimiter='\t')
     Hash_Q = np.load('data/Hash_Q.npy')
-    difficulty_attached = np.zeros(NUM_QUESTION, dtype=int)
+    difficulty_attached = np.zeros(MAXQ, dtype=int)
     for ele in difficulty:
         if Hash_Q[ele[0]] != -1:
             difficulty_attached[Hash_Q[ele[0]]] = ele[1]
